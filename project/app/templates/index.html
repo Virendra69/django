@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/index.css' %}">
+    <title>Task Manager</title>
+</head>
+<body>
+    <form id="set-task" action="{% url 'createTask' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="text" name="title" id="title" placeholder="Enter the title..." required>
+        <input type="text" name="desc" id="desc" placeholder="Enter the description..." required>
+        <input type="date" name="duedate" id="duedate" required>
+        <select name="priority" id="priority" required>
+            <option selected>Set Priority</option>
+            <option value="0">Low</option>
+            <option value="1">Medium</option>
+            <option value="2">High</option>
+        </select>
+        <button type="submit" id="submit-btn">Set Task</button>
+    </form>
+    <div id="task-viewer">
+        {% if all_tasks %}
+        {% for task in all_tasks %}
+        <div class="task-box">
+            <h4>{{ task.title }}</h4>
+            {{ task.description }}
+            {{ task.due_date }}
+            {{ task.priority }}
+        </div>
+        {% endfor %}
+        {% endif %}
+    </div>
+</body>
+</html>
