@@ -1,37 +1,103 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     {% load static %}
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{% static 'css/index.css' %}">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="{% static 'css/index.css' %}" />
     <title>Task Manager</title>
-</head>
-<body>
-    <form id="set-task" action="{% url 'createTask' %}" method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        <input type="text" name="title" id="title" placeholder="Enter the title..." required>
-        <input type="text" name="desc" id="desc" placeholder="Enter the description..." required>
-        <input type="date" name="duedate" id="duedate" required>
-        <select name="priority" id="priority" required>
-            <option selected>Set Priority</option>
-            <option value="0">Low</option>
-            <option value="1">Medium</option>
-            <option value="2">High</option>
-        </select>
-        <button type="submit" id="submit-btn">Set Task</button>
+  </head>
+  <body>
+    <div id="help">
+      <strong>Task Viewer can be used to set tasks and they get prioritised by date first and then by priority</strong>
+      <br>
+      <br>
+      <strong>How to use:</strong>
+      <br>
+       - Enter the title, description for the task, due date and its priority and set a new Task
+      <br>
+       - Delete a task by clicking the bin icon on the right of every Task
+    </div>
+    <h1>Task Viewer</h1>
+    <form
+      id="set-task"
+      action="{% url 'createTask' %}"
+      method="post"
+      enctype="multipart/form-data"
+    >
+      {% csrf_token %}
+      <input
+        type="text"
+        name="title"
+        id="title"
+        placeholder="Enter the title..."
+        required
+      />
+      <input
+        type="text"
+        name="desc"
+        id="desc"
+        placeholder="Enter the description..."
+        required
+      />
+      <input type="date" name="duedate" id="duedate" required />
+      <select name="priority" id="priority" required>
+        <option disabled selected>Set Priority</option>
+        <option value="0">High</option>
+        <option value="1">Medium</option>
+        <option value="2">Low</option>
+      </select>
+      <button type="submit" id="submit-btn">Set Task</button>
     </form>
     <div id="task-viewer">
-        {% if all_tasks %}
-        {% for task in all_tasks %}
-        <div class="task-box">
-            <h4>{{ task.title }}</h4>
-            {{ task.description }}
-            {{ task.due_date }}
-            {{ task.priority }}
+      {% if all_tasks %} {% for task in all_tasks %}
+      <div class="task-box">
+        <div class="task-box-content">
+          <h3>{{ task.title }}</h3>
+          {{ task.description }}
         </div>
-        {% endfor %}
-        {% endif %}
+        <div class="task-box-due-date">{{ task.due_date }}</div>
+        <div class="task-box-priority">{{ task.priority }}</div>
+        <form
+          class="task-box-delete"
+          action="{% url 'deleteTask' task.id %}"
+          method="post"
+        >
+          {% csrf_token %}
+          <button type="submit">
+            <img src="{% static 'delete-icon.png' %}" alt="" />
+          </button>
+        </form>
+      </div>
+      {% endfor %} {% endif %}
     </div>
-</body>
+    <div id="legend">
+        <div class="box"><div id="blueball"></div> Low </div>
+        <div class="box"><div id="greenball"></div> Medium </div>
+        <div class="box"><div id="redball"></div> High </div>
+    </div>
+  </body>
+  <script>
+    const currentDate = new Date();
+    const year = currentDate.getFullYear();
+    let month = (currentDate.getMonth() + 1).toString().padStart(2, "0");
+    let day = currentDate.getDate().toString().padStart(2, "0");
+    const minDate = `${year}-${month}-${day}`;
+    document.getElementById("duedate").setAttribute("min", minDate);
+
+    document.querySelectorAll(".task-box-priority").forEach((box) => {
+      var value = box.innerHTML;
+
+      if (value === "0") {
+        box.style.backgroundColor = "red";
+        box.innerHTML = "";
+      } else if (value === "1") {
+        box.style.backgroundColor = "green";
+        box.innerHTML = "";
+      } else {
+        box.style.backgroundColor = "blue";
+        box.innerHTML = "";
+      }
+    });
+  </script>
 </html>
