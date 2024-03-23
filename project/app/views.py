@@ -1,9 +1,8 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from .models import *
 
-# Create your views here.
 def indexPage(request):
-    all_tasks = Task.objects.all().order_by('priority', 'due_date')
+    all_tasks = Task.objects.all().order_by('due_date', 'priority')
     return render(request, 'index.html', {'all_tasks':all_tasks})
 
 def createTask(request):
@@ -21,4 +20,9 @@ def createTask(request):
         new_task.save()
 
         return redirect('indexPage')
+    return redirect('indexPage')
+
+def deleteTask(request, task_id):
+    task = get_object_or_404(Task, id=task_id)
+    task.delete_task()
     return redirect('indexPage')

@@ -7,5 +7,5 @@ class Task(models.Model):
     priority = models.IntegerField(default=None)
     due_date = models.DateField()
 
-    def __str__(self):
-        return self.title
+    def delete_task(self):
+        self.delete()
