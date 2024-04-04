@@ -23,6 +23,8 @@ def createTask(request):
     return redirect('indexPage')
 
 def deleteTask(request, task_id):
-    task = get_object_or_404(Task, id=task_id)
-    task.delete_task()
+    if request.method == "POST":
+        task = get_object_or_404(Task, id=task_id)
+        task.delete_task()
+        return redirect('indexPage')
     return redirect('indexPage')
